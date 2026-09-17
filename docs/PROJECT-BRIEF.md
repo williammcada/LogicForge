@@ -1,96 +1,84 @@
 # Project Brief — LogicForge
 
-**Brief status:** Migration baseline / requires source verification where noted  
-**Brief version:** 0.1  
-**Last updated:** 18 September 2026  
-**Owner:** William McAda  
-**Product credit:** A WILLIAM MCADA PRODUCT  
-**Handbook repository:** `williammcada/mcada-project-handbook`  
-**Handbook baseline:** `6557a45aaa6d29d7d1abde808e6d0ac248b08820 (AI-START-HERE.md); UNIVERSAL-RULES.md @ aed6fe311aa2e88983f862a30a2d8f05d2ffc04d`  
-**Repository:** `williammcada/LogicForge`  
-**Canonical source status:** Latest discussed build is v0.4.1; canonical source artifact is TO ESTABLISH from the latest known-good local build before further revision.  
-**Current project state:** Active application undergoing round-trip import/export hardening.
+**Brief version:** 0.2 — audited documentation revision  
+**Owner:** William McAda · **Credit:** A WILLIAM MCADA PRODUCT  
+**Status:** Revised record for owner review; not an application release or fresh feature approval.  
+**Repository destination:** williammcada/LogicForge (verify existence/current branch before source edits).  
+**Current running version:** Not independently verified in this documentation task.  
+**Source/baseline:** Known artifact LogicForge_v0.4.2.html; recorded project schema 2.3.0 / LOGICFORGE_PROJECT. Earlier v0.4.1 brief was stale. Conflicting older filename v2.2.0 must not be numerically assumed newer without inspecting identity.  
+**Next work:** Preserve v0.4.2 and expand documented round-trip coverage.
 
-## 1. Purpose and audience
+## 1. Purpose, audience and detailed scope
 
-LogicForge is a teacher-designed system for printable collaborative logic/puzzle activities with external-AI content generation, multiple puzzle/game modes, configurable cultural immersion, randomized candidate characteristics, and deduction-focused student materials.
+- Offline teacher authoring app for printable collaborative mathematics/deduction activities; student experience does not require screens. Preserve Who Did It?, Build the Profile and Complete the Case, with distinct puzzle/game mode contracts.
+- Support Neutral/Familiar/Deep Dive cultural depth, contextual narratives, glossary/ELL support, customizable candidate characteristics, settings help and CCSS setup where present.
+- Preserve the established 32-row five-bit internal matrix and necessary-clue constraints for the relevant mode. Do not impose one mode's matrix, fields or elimination order on unrelated modes.
+- Generation packet must be self-contained: schema/version, project/design identity, selected modes, clue/answer rules, required types, valid examples and completeness checks. Validate output packets before handoff, not only incoming JSON.
+- Import atomically after validation; reject stale/wrong-design results clearly and leave valid project state intact. Save/open JSON, recent projects, restore points, compatible schema migration and teacher review must remain.
+- Avoid predictable last-candidate guilt. Complete the Case objects/places receive contextual names, not human stand-ins. Configurable characteristics can include favorite coffee business without modifying deduction truth rules.
+- Student evidence tracker prioritizes usable elimination/deduction over copying internal metadata. Final printed packets identify game mode and provide answer/teacher material.
+- Maintain distinct A1–Z26 and answer-associated matching/cross-out mechanics where supported. Exact clue count depends on the selected extraction/deduction design.
+- No executable imported rules, hidden web research dependency, punctuation-decoding expansion, or automatic all-mode redesign. Cross-product exchange principles do not make LogicForge truth fields universal.
 
-**Primary audience / operator:** Teachers creating printable collaborative classroom logic/puzzle experiences.
+## 2. This task and boundaries
 
-## 2. Standards selection
+This revision repairs documentation only. It does not implement features, run application tests, upload source, deploy a site, or alter a repository. Retain the exact current source before implementation. Historical reported functionality is a preservation checklist to reconcile against that source, not permission to recreate the program from prose.
 
-**Universal baseline:** U-01 through U-08 where applicable.
+## 3. Standards and adoption
 
-**Conditional modules:** S-01 External AI Generation and Structured Import; S-02 Curriculum/Assessment/Evidence; S-04 Distribution/Deployment
+[Canonical handbook](https://github.com/williammcada/mcada-project-handbook). File blob revisions consulted: AI-START-HERE.md 6557a45aaa6d29d7d1abde808e6d0ac248b08820; UNIVERSAL-RULES.md aed6fe311aa2e88983f862a30a2d8f05d2ffc04d; CONDITIONAL-STANDARDS.md dad2d3a05ca0f18260196ea51ac6351bffffdc1c; PROJECT-TEMPLATE.md 574f4c6fcf19ecc2f9e27582fd856fb08123e8da. These are file blobs, not repository commit SHAs.
 
-Apply only the selected modules and project-local requirements. Do not import restrictions from unrelated projects.
+Relevant rules: U-01 identity, U-02 help, U-03 input validation, U-04 unambiguous math/text where applicable, U-05 reader/device, U-06 preservation, U-07 verification, U-08 local scope. Conditional selection: S-01, S-02, S-04.
+Baseline adoption: selected for this documentation task within existing user instructions. Handbook still labels shared scope/modules seeded/draft; no new global rule ratification is inferred. Project-specific approved decisions control their own scope.
 
-## 3. Project-specific requirements
+## 4. Must-retain behavior
 
-- Maintain one explicit versioned export/import contract and stop relying on manual screenshot/error bouncing.
-- Support the intended puzzle modes, game modes, and cultural-immersion levels without generalizing one mode's fields into all others.
-- Guilty/solution placement must not become predictably tied to dossier order.
-- Case Mode objects/places must use context-appropriate labels rather than accidental human names.
-- Evidence tracking should prioritize fast suspect/object/location elimination rather than unnecessary copying.
-- Random candidate characteristics such as favorite food/drink/hobby/business preference remain local configurable content.
-- Final packets should identify the game mode and preserve the actual project/design identity.
+The detailed scope above is the feature-preservation inventory. Preserve existing settings, data, accepted content, assets, exports and compatibility confirmed in source. Distinguish implemented behavior, accepted pending changes and historical requests during intake. A missing entry in this brief is not authorization to remove working behavior. Preserve valid user work during migrations and failures.
 
-## 4. Preserve from the current accepted project
+## 5. Source, release and deployment discipline
 
-- Teacher customization and printable student experience.
-- Round-trip AI generation workflow.
-- Distinct puzzle/game modes and cultural immersion levels.
-- Deduction validity and evidence-tracker focus.
-- Provider-neutral generation contract rather than model-specific hidden assumptions.
+Known artifact LogicForge_v0.4.2.html; recorded project schema 2.3.0 / LOGICFORGE_PROJECT. Earlier v0.4.1 brief was stale. Conflicting older filename v2.2.0 must not be numerically assumed newer without inspecting identity.
 
-## 5. Relationship to other projects
+Record exact selected source filename/hash and repository commit when importing it; record live URL/version only after actually opening it. Unknown commit does not mean the product is unbuilt.
 
-- Shares structured-generation principles with TestForge and AAC Studio but keeps its own deduction/candidate contract.
-- LogicForge-specific numeric truth values, glossary rules, naming rules, and Cross-Out ordering must not become universal fields.
+DESIGN → CHANGE SPEC → IMPLEMENT → CHECKPOINT → VERIFY → VERIFIED CHECKPOINT → RELEASE → DEPLOY.
 
-A conceptual relationship is not proof of an implemented integration. Do not invent a shared API, data schema, identity layer, or deployment dependency without an explicit integration task.
+Use “implementation checkpoint” or “release candidate” before verification. Preserve candidate bytes and logs before packaging; recover that checkpoint after a ZIP/upload failure. Do not rebuild a verified implementation to fix delivery. Repository upload and website deployment are different operations; existing automatic deployments may run when main changes.
 
-## 6. Source and version discipline
+## 6. Known issues, conflicts and open evidence
 
-The exact current source artifact or repository commit must be identified before a substantive build. If the field above says the source is not yet established, first locate the latest known-good local file/ZIP or existing repository state and record its exact identity here.
+Repeated import failures motivated platform-level contract repairs. No exhaustive claim across modes/cultural depths is justified. Preserve known valid r16 LF-660847F4 packet/import as a candidate regression fixture, not universal proof.
 
-For substantial revisions use:
+| Conflict or risk | Required handling |
+| --- | --- |
+| Historical claim versus current source | Inspect exact source; keep historical claim labeled until verified. |
+| Proposed next scope versus working baseline | Use the approved version-specific specification; do not silently promote proposals. |
+| Other project rules | Do not import AAC quotas, other-game retry counts, or a shared backend without explicit scope. |
+| Handbook proposals | No additional exception or proposal is adopted by this brief. |
 
-**DESIGN → CHANGE SPEC → IMPLEMENT → CHECKPOINT → VERIFY → VERIFIED CHECKPOINT → RELEASE → DEPLOY (when applicable)**
+## 7. Verification contract
 
-A packaging/export/deployment failure must not force reconstruction of an already verified build.
+Test valid, malformed and wrong-revision imports without state loss; record a mode-by-culture coverage matrix; inspect full printed packets and unique deduction, not merely JSON acceptance.
 
-## 7. Definition of done
+| Evidence required | Result in this task |
+| --- | --- |
+| Exact source candidate/commit identified and preserved | Not run — documentation revision only |
+| Project-specific checks above, with inputs and expected/actual results | Not run |
+| Save/import/export and malformed-input regression | Not run |
+| Intended devices and real deployment path, where applicable | Not run |
+| Version, release notes and delivered bytes agree | Not run |
 
-| # | Requirement / check | Result | Evidence / limitation |
-| ---: | --- | --- | --- |
-| 1 | Representative export/import round trips pass across multiple puzzle/game/cultural-immersion combinations. | Not run | |
-| 2 | Wrong design/project/revision packets fail clearly. | Not run | |
-| 3 | Generated puzzles have one valid intended solution and non-predictable culprit/target placement. | Not run | |
-| 4 | Printable packet, evidence tracker, and answer key remain coherent. | Not run | |
-| 5 | No unsupported fields silently disappear during round trip. | Not run | |
+The next build report must name the candidate, environment and test results; historical reports of passing tests do not transfer to a changed candidate.
 
-Allowed results: **Passed / Failed / Not run / Not applicable**. A "Passed" result requires an actual check against the identified candidate.
+## 8. Handoff and provenance
 
-## 8. Known issues and migration notes
+Required project records: LogicForge_v0.4.2.html; LogicForge_v0.3_Technical_Specification.docx; r16 generation packet and corresponding import; accepted v0.4.1/0.4.2 repair records.
 
-Migration should preserve the current v0.4.1 work while future testing broadens combinatorial coverage gradually rather than claiming exhaustive proof from a few examples.
+Provenance: previous migration brief and project-history audit in this conversation; directly read dossier/proposal where explicitly stated above. Records not explicitly marked read here are retrieval targets, not claims of fresh inspection. No current app code was tested for this brief.
 
-## 9. Handoff files
+Before substantive implementation retrieve these records, the current source, approved change spec and applicable handbook. If an indispensable spec is inaccessible, report the gap instead of filling it with invented details. Do not delete unique historical chats/assets until their contents are independently preserved.
 
-A substantive AI implementation task should retrieve or receive:
+## 9. Ecosystem boundary
 
-1. `AI-START-HERE.md`;
-2. `UNIVERSAL-RULES.md`;
-3. the relevant sections of `CONDITIONAL-STANDARDS.md`;
-4. this project brief;
-5. the exact current source artifact/commit;
-6. the approved version-specific change specification;
-7. applicable assets and deployment configuration.
+Shared principles do not establish shared code, accounts or interfaces. MathQuest is engagement, TestForge assessment design, GradePal learner-level evidence, and DataDiver institutional analytics. Integration remains separately specified unless confirmed in source. Other projects remain independent unless their brief explicitly says otherwise.
 
-Do not reconstruct the current implementation from a historical chat summary when the actual source should be available.
-
-## 10. Ownership
-
-**William McAda**  
-**A WILLIAM MCADA PRODUCT**
