@@ -1,20 +1,16 @@
 # Migration Note — LogicForge
 
-**Prepared:** 18 September 2026
+**Prepared:** 18 September 2026  
+**Status:** Historical migration note; source-status section superseded on 18 September 2026.
 
-This file records the initial move from chat-centered project history toward a repository-centered canonical record.
+The canonical source identity is now recorded in [`MIGRATION-BASELINE.md`](MIGRATION-BASELINE.md). Earlier statements that the source, filename, version or repository checkpoint was “TO ESTABLISH” are no longer current.
 
-## Source status at migration
+## Resolved source status
 
-Latest discussed build is v0.4.1; canonical source artifact is TO ESTABLISH from the latest known-good local build before further revision.
+Canonical preserved source: `LogicForge_v0.4.2.html`, Git blob `edd4ff8b7a484ae2d9ee05cfaeae541b6b71a3da`, at source checkpoint `11031634b2687fbc4e4d336798ce29e0ec43f4bd`. The internal project schema 2.3.0 is distinct from the application release label.
 
-## What to do next
+## Remaining work
 
-1. Identify the exact latest known-good source artifact.
-2. Place/confirm it in this repository.
-3. Update `PROJECT-BRIEF.md` with the exact version/commit.
-4. Copy any unique approved historical specification that is still needed into `docs/change-specs/`.
-5. Verify the repository source can be opened/built/deployed as appropriate.
-6. Only after unique project state is safely preserved should historical monster chats be treated as disposable.
+Use the committed v0.4.2 source as the baseline and expand the round-trip regression matrix before any stronger compatibility claim.
 
-This migration note is not a release specification and does not authorize new features.
+This note is not a release specification and does not authorize new features. Functional, device and deployment verification remain separate from source preservation.
