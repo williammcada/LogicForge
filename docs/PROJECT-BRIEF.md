@@ -1,12 +1,12 @@
 # Project Brief — LogicForge
 
-**Brief version:** 0.2 — audited documentation revision  
+**Brief version:** 0.3 — source-baseline normalization  
 **Owner:** William McAda · **Credit:** A WILLIAM MCADA PRODUCT  
-**Status:** Revised record for owner review; not an application release or fresh feature approval.  
-**Repository destination:** williammcada/LogicForge (verify existence/current branch before source edits).  
-**Current running version:** Not independently verified in this documentation task.  
-**Source/baseline:** Known artifact LogicForge_v0.4.2.html; recorded project schema 2.3.0 / LOGICFORGE_PROJECT. Earlier v0.4.1 brief was stale. Conflicting older filename v2.2.0 must not be numerically assumed newer without inspecting identity.  
-**Next work:** Preserve v0.4.2 and expand documented round-trip coverage.
+**Status:** Canonical source identity reconciled; release, functional and deployment verification remain separately stated.  
+**Repository:** `williammcada/LogicForge`, branch `main`.  
+**Current running version:** Not independently verified. Exact committed v0.4.2 source identity and byte preservation are established.  
+**Source/baseline:** Canonical preserved source: `LogicForge_v0.4.2.html`, Git blob `edd4ff8b7a484ae2d9ee05cfaeae541b6b71a3da`, at source checkpoint `11031634b2687fbc4e4d336798ce29e0ec43f4bd`. The internal project schema 2.3.0 is distinct from the application release label.  
+**Next work:** Use the committed v0.4.2 source as the baseline and expand the round-trip regression matrix before any stronger compatibility claim.  
 
 ## 1. Purpose, audience and detailed scope
 
@@ -22,7 +22,7 @@
 
 ## 2. This task and boundaries
 
-This revision repairs documentation only. It does not implement features, run application tests, upload source, deploy a site, or alter a repository. Retain the exact current source before implementation. Historical reported functionality is a preservation checklist to reconcile against that source, not permission to recreate the program from prose.
+This normalization establishes the exact repository source path, Git object identity and source-preservation checkpoint; creates the linked migration baseline; and retires stale pre-upload source-status wording. It does not change application behavior, approve new features, rerun product tests or convert source preservation into a release claim.
 
 ## 3. Standards and adoption
 
@@ -37,13 +37,13 @@ The detailed scope above is the feature-preservation inventory. Preserve existin
 
 ## 5. Source, release and deployment discipline
 
-Known artifact LogicForge_v0.4.2.html; recorded project schema 2.3.0 / LOGICFORGE_PROJECT. Earlier v0.4.1 brief was stale. Conflicting older filename v2.2.0 must not be numerically assumed newer without inspecting identity.
+Canonical preserved source: `LogicForge_v0.4.2.html`, Git blob `edd4ff8b7a484ae2d9ee05cfaeae541b6b71a3da`, at source checkpoint `11031634b2687fbc4e4d336798ce29e0ec43f4bd`. The internal project schema 2.3.0 is distinct from the application release label.
 
-Record exact selected source filename/hash and repository commit when importing it; record live URL/version only after actually opening it. Unknown commit does not mean the product is unbuilt.
+See [`MIGRATION-BASELINE.md`](MIGRATION-BASELINE.md) for the authoritative source manifest and the checks actually performed.
 
 DESIGN → CHANGE SPEC → IMPLEMENT → CHECKPOINT → VERIFY → VERIFIED CHECKPOINT → RELEASE → DEPLOY.
 
-Use “implementation checkpoint” or “release candidate” before verification. Preserve candidate bytes and logs before packaging; recover that checkpoint after a ZIP/upload failure. Do not rebuild a verified implementation to fix delivery. Repository upload and website deployment are different operations; existing automatic deployments may run when main changes.
+Use “implementation checkpoint” or “release candidate” before verification. Preserve candidate bytes and logs before packaging; recover that checkpoint after a ZIP/upload failure. Do not rebuild a verified implementation to fix delivery. Repository upload and website deployment are different operations.
 
 ## 6. Known issues, conflicts and open evidence
 
@@ -62,7 +62,7 @@ Test valid, malformed and wrong-revision imports without state loss; record a mo
 
 | Evidence required | Result in this task |
 | --- | --- |
-| Exact source candidate/commit identified and preserved | Not run — documentation revision only |
+| Exact source candidate/commit identified and preserved | Passed — canonical path and source checkpoint recorded in `docs/MIGRATION-BASELINE.md`; no functional verification inferred |
 | Project-specific checks above, with inputs and expected/actual results | Not run |
 | Save/import/export and malformed-input regression | Not run |
 | Intended devices and real deployment path, where applicable | Not run |
@@ -71,6 +71,8 @@ Test valid, malformed and wrong-revision imports without state loss; record a mo
 The next build report must name the candidate, environment and test results; historical reports of passing tests do not transfer to a changed candidate.
 
 ## 8. Handoff and provenance
+
+Current source identity is recorded in [`MIGRATION-BASELINE.md`](MIGRATION-BASELINE.md). That manifest supersedes earlier unknown-source or pre-upload statements while preserving the original migration note as history.
 
 Required project records: LogicForge_v0.4.2.html; LogicForge_v0.3_Technical_Specification.docx; r16 generation packet and corresponding import; accepted v0.4.1/0.4.2 repair records.
 
