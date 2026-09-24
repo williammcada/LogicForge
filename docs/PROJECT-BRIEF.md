@@ -1,12 +1,12 @@
 # Project Brief — LogicForge
 
-**Brief version:** 0.3 — source-baseline normalization  
+**Brief version:** 0.4 — student text and print repair candidate  
 **Owner:** William McAda · **Credit:** A WILLIAM MCADA PRODUCT  
 **Status:** Canonical source identity reconciled; release, functional and deployment verification remain separately stated.  
 **Repository:** `williammcada/LogicForge`, branch `main`.  
 **Current running version:** Not independently verified. Exact committed v0.4.2 source identity and byte preservation are established.  
 **Source/baseline:** Canonical preserved source: `LogicForge_v0.4.2.html`, Git blob `edd4ff8b7a484ae2d9ee05cfaeae541b6b71a3da`, at source checkpoint `11031634b2687fbc4e4d336798ce29e0ec43f4bd`. The internal project schema 2.3.0 is distinct from the application release label.  
-**Next work:** Use the committed v0.4.2 source as the baseline and expand the round-trip regression matrix before any stronger compatibility claim.  
+**Next work:** Verify physical PDF pagination for the v0.4.3 candidate. Its four-column matching key and student-facing generation rules implement the approved September 24 scope. See change-specs/v0.4.3-STUDENT-TEXT-AND-PRINT.md and VERIFICATION-v0.4.3.md.  
 
 ## 1. Purpose, audience and detailed scope
 
@@ -84,3 +84,9 @@ Before substantive implementation retrieve these records, the current source, ap
 
 Shared principles do not establish shared code, accounts or interfaces. MathQuest is engagement, TestForge assessment design, GradePal learner-level evidence, and DataDiver institutional analytics. Integration remains separately specified unless confirmed in source. Other projects remain independent unless their brief explicitly says otherwise.
 
+
+## 10. September 24 student-publication requirements
+
+Primary-school narrative and simple directions belong on the cover; engine explanations belong in teacher notes. Culture/clue references use prose, not calculations. Above 12 questions or 12 matching entries (including decoys), print two answer/fragment pairs per row and keep the recording boxes and clue line with the key. Preserve schema identity, all deduction data, mathematical question formatting and existing modes.
+
+Candidate: LogicForge_v0.4.3.html on work/v0.4.3-student-print. This is not a verified release; physical browser/PDF checks remain pending. Historical source-baseline sections above remain provenance for v0.4.2.
