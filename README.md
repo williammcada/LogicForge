@@ -32,3 +32,15 @@ Do not treat a renamed file, README update, successful build, or packaging attem
 
 **William McAda**  
 **A WILLIAM MCADA PRODUCT**
+
+## v0.4.3 candidate — student text and print repairs
+
+[Open/download the candidate HTML](LogicForge_v0.4.3.html). Save it locally and open in a browser. The v0.4.2 source remains preserved.
+
+- AI packets explicitly require a primary-student narrative on the cover and plain prose in culture/clue references.
+- Matching keys above 12 questions or key entries use four columns, including decoys. Recording boxes stay in the decoder panel.
+- Existing reference equation delimiters no longer print literally; legacy content is preserved as plain text. Newly generated reference content must avoid calculations entirely.
+
+[Approved change specification](docs/change-specs/v0.4.3-STUDENT-TEXT-AND-PRINT.md) · [Verification record](docs/VERIFICATION-v0.4.3.md)
+
+Status: implementation candidate, not verified release. Browser/PDF pagination remains to be checked. No hosting deployment was performed.
