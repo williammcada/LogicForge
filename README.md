@@ -1,46 +1,39 @@
-# LogicForge
+# LogicForge v0.5
 
 **A WILLIAM MCADA PRODUCT**
 
-LogicForge is a teacher-designed system for printable collaborative logic/puzzle activities with external-AI content generation, multiple puzzle/game modes, configurable cultural immersion, randomized candidate characteristics, and deduction-focused student materials.
+Offline teacher authoring for printable collaborative mathematics mysteries.
 
-## Canonical project record
+## Current download
 
-**Repository:** `williammcada/LogicForge`  
-**Current state:** Active application undergoing round-trip import/export hardening.  
-**Handbook:** `williammcada/mcada-project-handbook`
+[LogicForge_v0.5.html](LogicForge_v0.5.html) — save locally and open in your browser.
 
-The repository is the canonical home for the current source, permanent project brief, and approved version-specific change specifications. Chat history is working context rather than the permanent project record.
+Status: v0.5 implementation candidate; automated contract, validator and generated-output checks passed. Physical browser/PDF pagination remains unverified. This is not a verified release or a hosted deployment.
 
-## Documentation
+## Changes
 
-- [`docs/PROJECT-BRIEF.md`](docs/PROJECT-BRIEF.md)
-- [`docs/change-specs/`](docs/change-specs/)
+- Numeric Culture and clue reference tables are omitted, including number identifiers, times and distances. Students apply the numerical rules themselves.
+- Circled glossary-reference numbers are removed from comparison tables, reference tables and glossary headings. The ELL glossary remains available by term.
+- New AI packets omit numeric guides; the validator no longer requires them at any cultural depth. Existing numeric guides and all internal glossary links are preserved in saved data.
+- Empty reference pages are omitted. Cultural/factual references remain available and required where appropriate.
+- Retains v0.4.3's primary-student narrative instructions and four-column matching keys above 12 questions/entries.
+
+## Existing projects
+
+Save your project from your old app first. Open v0.5 and use Open project to load that saved project JSON. The reference and glossary display changes apply immediately to existing generated content; no new AI roundtrip is required. An AI result JSON alone is not a saved project.
+
+Review the student preview before printing. In the browser print dialog, turn off **Headers and footers** to remove the local file path and browser-added date/page numbers. LogicForge retains its own section footer.
+
+## Canonical records
+
+Repository: williammcada/LogicForge. Candidate branch: work/v0.5-student-references.
+
+- [Project brief](docs/PROJECT-BRIEF.md)
+- [v0.5 approved change specification](docs/change-specs/v0.5-STUDENT-REFERENCE-CLEANUP.md)
+- [Verification record](docs/VERIFICATION-v0.5.md)
+- [Change-spec index](docs/change-specs/INDEX.md)
 - [McAda Project Handbook](https://github.com/williammcada/mcada-project-handbook)
 
-Use the project brief for permanent project-local rules and the change-spec directory for version-specific approved decisions.
+The v0.4.2 and v0.4.3 source files remain preserved. Project/exchange schema remains 2.3.0; application version is 0.5.0.
 
-## Release workflow
-
-**DESIGN → CHANGE SPEC → IMPLEMENT → CHECKPOINT → VERIFY → VERIFIED CHECKPOINT → RELEASE → DEPLOY (when applicable)**
-
-Do not treat a renamed file, README update, successful build, or packaging attempt as proof that the intended release is actually running. Preserve accepted behavior unless the approved change specification deliberately changes it.
-
-
-
-## Ownership
-
-**William McAda**  
-**A WILLIAM MCADA PRODUCT**
-
-## v0.4.3 candidate — student text and print repairs
-
-[Open/download the candidate HTML](LogicForge_v0.4.3.html). Save it locally and open in a browser. The v0.4.2 source remains preserved.
-
-- AI packets explicitly require a primary-student narrative on the cover and plain prose in culture/clue references.
-- Matching keys above 12 questions or key entries use four columns, including decoys. Recording boxes stay in the decoder panel.
-- Existing reference equation delimiters no longer print literally; legacy content is preserved as plain text. Newly generated reference content must avoid calculations entirely.
-
-[Approved change specification](docs/change-specs/v0.4.3-STUDENT-TEXT-AND-PRINT.md) · [Verification record](docs/VERIFICATION-v0.4.3.md)
-
-Status: implementation candidate, not verified release. Browser/PDF pagination remains to be checked. No hosting deployment was performed.
+Workflow: DESIGN → CHANGE SPEC → IMPLEMENT → CHECKPOINT → VERIFY → VERIFIED CHECKPOINT → RELEASE → DEPLOY. Pending physical print verification is recorded explicitly; no fully verified release is claimed.

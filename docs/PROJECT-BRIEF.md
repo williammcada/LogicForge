@@ -1,12 +1,13 @@
 # Project Brief — LogicForge
 
-**Brief version:** 0.4 — student text and print repair candidate  
+**Brief version:** 0.5 — student reference cleanup  
 **Owner:** William McAda · **Credit:** A WILLIAM MCADA PRODUCT  
 **Status:** Canonical source identity reconciled; release, functional and deployment verification remain separately stated.  
 **Repository:** `williammcada/LogicForge`, branch `main`.  
-**Current running version:** Not independently verified. Exact committed v0.4.2 source identity and byte preservation are established.  
-**Source/baseline:** Canonical preserved source: `LogicForge_v0.4.2.html`, Git blob `edd4ff8b7a484ae2d9ee05cfaeae541b6b71a3da`, at source checkpoint `11031634b2687fbc4e4d336798ce29e0ec43f4bd`. The internal project schema 2.3.0 is distinct from the application release label.  
-**Next work:** Verify physical PDF pagination for the v0.4.3 candidate. Its four-column matching key and student-facing generation rules implement the approved September 24 scope. See change-specs/v0.4.3-STUDENT-TEXT-AND-PRINT.md and VERIFICATION-v0.4.3.md.  
+**Current candidate:** LogicForge_v0.5.html, application 0.5.0, schema 2.3.0. Automated checks passed; physical PDF and classroom verification remain pending.  
+**Source/baseline:** v0.4.3 at 48430905324dad387d6d196b300d0759b976718f. v0.5 implementation checkpoint a191da43b14408f685cc988e880373b10361482f on work/v0.5-student-references.  
+**Next work:** Physical browser/PDF verification; see VERIFICATION-v0.5.md.  
+
 
 ## 1. Purpose, audience and detailed scope
 
@@ -22,7 +23,7 @@
 
 ## 2. This task and boundaries
 
-This normalization establishes the exact repository source path, Git object identity and source-preservation checkpoint; creates the linked migration baseline; and retires stale pre-upload source-status wording. It does not change application behavior, approve new features, rerun product tests or convert source preservation into a release claim.
+The v0.5 task implements the September 28 request: omit numeric reference cards/tables and remove circled glossary cross-reference numbers while preserving ELL support and puzzle data. It retains the v0.4.3 student text and decoder-print changes. The browser print-path issue is addressed with setting guidance, not a claim that HTML controls browser headers/footers.
 
 ## 3. Standards and adoption
 
@@ -90,3 +91,12 @@ Shared principles do not establish shared code, accounts or interfaces. MathQues
 Primary-school narrative and simple directions belong on the cover; engine explanations belong in teacher notes. Culture/clue references use prose, not calculations. Above 12 questions or 12 matching entries (including decoys), print two answer/fragment pairs per row and keep the recording boxes and clue line with the key. Preserve schema identity, all deduction data, mathematical question formatting and existing modes.
 
 Candidate: LogicForge_v0.4.3.html on work/v0.4.3-student-print. This is not a verified release; physical browser/PDF checks remain pending. Historical source-baseline sections above remain provenance for v0.4.2.
+
+
+## 11. v0.5 student reference rules
+
+Number fields never require or print Culture and clue reference cards, including Number fields representing time or distance. New generation omits those guides; old guides remain stored for compatibility. This supersedes the earlier requirement to include guides for every field at higher culture depth. Non-numeric cultural/factual guides remain required under the existing rules.
+
+Student output uses no circled glossary markers. Term headings, definitions, facts and examples remain. Stable glossary IDs and links remain internal. Empty sections are omitted. No new numerical predicates, grading features, or unrelated rules were added.
+
+Handbook rechecked at 6de4cbf33c3b9860125c412359fb64ef3d0b20d1: AI-START-HERE.md, UNIVERSAL-RULES.md, CONDITIONAL-STANDARDS.md (S-01/S-02/S-04) and RELEASE-CHECKLIST.md. Earlier source-baseline and verification sections are historical; the v0.5 verification record controls current claims.
