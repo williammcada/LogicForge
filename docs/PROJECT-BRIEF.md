@@ -100,3 +100,10 @@ Number fields never require or print Culture and clue reference cards, including
 Student output uses no circled glossary markers. Term headings, definitions, facts and examples remain. Stable glossary IDs and links remain internal. Empty sections are omitted. No new numerical predicates, grading features, or unrelated rules were added.
 
 Handbook rechecked at 6de4cbf33c3b9860125c412359fb64ef3d0b20d1: AI-START-HERE.md, UNIVERSAL-RULES.md, CONDITIONAL-STANDARDS.md (S-01/S-02/S-04) and RELEASE-CHECKLIST.md. Earlier source-baseline and verification sections are historical; the v0.5 verification record controls current claims.
+
+
+## 12. v0.5.1 teacher summary and multilingual editions
+
+Current candidate is LogicForge_v0.5.1.html, application 0.5.1/schema 2.3.0. This supersedes the current-candidate label above, not historical provenance. Requested scope: compact teacher closing summaries, actual decoder replay in the matrix table, packet-language selection and parallel translated editions through the established AI roundtrip. Source and translated copies preserve math and deduction identities; native-script matching and cross-out do not extend A–Z Alphabet Code. Full imported prose is retained for review. See change-specs-v0.5.1.md and VERIFICATION-v0.5.1.md for behavior and explicit limits.
+
+Handbook rechecked at 00cbde605ab08203b6b5fd2374d225155608fc29: AI-START-HERE, UNIVERSAL-RULES, CONDITIONAL-STANDARDS and RELEASE-CHECKLIST. Newly approved U-09 applies; Recent projects now offers scoped individual/group/all deletion with confirmation and in-tab undo. Only synthetic storage is used for development checks. No cross-product feature scope is inferred.

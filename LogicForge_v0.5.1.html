@@ -476,7 +476,7 @@ const HELP = {
   'Advanced logic overrides': 'Opens the five field panels with predicates, positive/negative clues, selected polarity, and decoder payloads. Choose Teacher supplied to edit a rule. Reset to automatic clears an override. Matrix IDs and truth bits remain protected.',
   'Published title': 'Controls the title printed on student and teacher packets. It may differ from the project title after import.',
   'Cover hook': 'Short student-facing introduction for the cover page. It must not reveal answers or the final solution.',
-  'Case briefing': 'A short mystery story written directly for primary students. Introduce the place, incident, and mission in simple English. Put brief solving directions in Evidence rule and technical explanations in teacher notes.',
+  'Case briefing': 'A short mystery story written directly for primary students. Introduce the place, incident, and mission in simple language in the selected packet language. Put brief solving directions in Evidence rule and technical explanations in teacher notes.',
   'Initial timeline': 'Provides only information students may know before solving. It must not leak teacher-only evidence.',
   'Evidence rule': 'States how students combine decoded evidence with the dossier or comparison table to rule out candidates. This makes the deduction process unambiguous.',
   'Student instructions': 'Explains the mathematics and extraction task without exposing answers.',
@@ -710,7 +710,7 @@ const PACKET_LANGUAGES = [
 function packetLanguage() {
   const code = P.packetLanguage || 'en';
   const custom = code === 'custom';
-  return { code, name: custom ? String(P.customPacketLanguage || '').trim() : (PACKET_LANGUAGES.find(item => item.value === code)?.label || code), direction: custom ? (P.packetDirection || 'ltr') : /^(ar|he|fa|ur)(-|$)/.test(code) ? 'rtl' : 'ltr' };
+  return { code, name: custom ? String(P.customPacketLanguage || '').trim() : (PACKET_LANGUAGES.find(item => item.value === code)?.label || code), direction: custom ? (P.packetDirection === 'rtl' ? 'rtl' : 'ltr') : /^(ar|he|fa|ur)(-|$)/.test(code) ? 'rtl' : 'ltr' };
 }
 function languageSettings() {
   return `<section class="card"><h3>Packet language</h3><p class="muted">The app stays in English. Student and teacher packets, questions, clues and reference text use the selected language after a new AI roundtrip. For a parallel version, create a copy from a completed project.</p><div class="grid">${field({label:'Generation language',path:'packetLanguage',value:P.packetLanguage || 'en',options:PACKET_LANGUAGES,disabled:!!P.generated,note:P.generated?'Use Create translated copy to preserve this completed version.':'Use age-appropriate classroom language.'})}${P.packetLanguage === 'custom' ? field({label:'Language and regional variety',path:'customPacketLanguage',value:P.customPacketLanguage || '',disabled:!!P.generated,note:'For example: Somali, or French (Canada).'})+field({label:'Reading direction',path:'packetDirection',value:P.packetDirection || 'ltr',options:[{value:'ltr',label:'Left to right'},{value:'rtl',label:'Right to left'}],disabled:!!P.generated}) : ''}</div>${P.generated ? `<div class="actions"><select id="translationLanguage" aria-label="Language for translated copy">${PACKET_LANGUAGES.map(item=>`<option value="${item.value}" ${item.value==='es-US'?'selected':''}>${esc(item.label)}</option>`).join('')}</select><input id="translationCustom" aria-label="Custom translation language" placeholder="Other language / regional variety"><select id="translationDirection" aria-label="Custom language reading direction"><option value="ltr">Other: left to right</option><option value="rtl">Other: right to left</option></select><button type="button" onclick="createTranslatedCopy()">Create translated copy</button></div><p class="muted">Keeps a restore point and downloads the source project as a backup. The new copy needs AI translation, import and teacher review. Native-script Answer Matching and Cross-Out are supported. In a translated copy, Alphabet Code changes to Answer Matching so the original math answers can stay the same.</p>` : ''}</section>`;
@@ -723,6 +723,7 @@ function createTranslatedCopy() {
   // Preserve the exact source first. No original project content is rewritten.
   if (!saveRestorePoint(P)) return;
   downloadProject();
+  const originalProject=P, originalMode=printMode, originalTab=activeTab;
   const copy = clone(P), source = clone(P.generated), sourceLanguage = packetLanguage();
   copy.id = uid('PROJECT'); copy.revision = 1;
   copy.packetLanguage = code; copy.customPacketLanguage = custom;
@@ -741,7 +742,9 @@ function createTranslatedCopy() {
   });
   copy.generated = null; copy.reviewed = false; copy.reviewAcknowledged = false;
   copy.publication = {printMode:'student',translationSource:source,sourceLanguage};
-  P=copy; printMode='student'; activeTab=3; save(); render();
+  P=copy; printMode='student'; activeTab=3;
+  if(!save()){P=originalProject;printMode=originalMode;activeTab=originalTab;return;}
+  render();
   toast('Translated copy created. Export its AI packet; the original is backed up and available in Recent projects.');
 }
 
@@ -780,10 +783,11 @@ function packetLabelKeys() {
   const source = P.publication?.translationSource;
   return [...new Set([...PACKET_LABELS, P.course, P.incident, P.matrix?.cultureFocus,
     ...Object.values(GAME_MODES).map(item=>item.name),
-    ...matrixFields().map(field=>field.label), ...P.profileAttributes.flatMap(field=>[field.label,field.value]),
+    ...matrixFields().flatMap(field=>[field.label,...(field.valueMode==='Teacher supplied catalog'?parseManualCatalog(field).map(item=>item.display):[])]), ...P.profileAttributes.flatMap(field=>[field.label,field.value]),
     ...P.activities.flatMap(activity=>[activity.calculator,activity.difficulty,activity.logic.studentFrame,activity.logic.requiredLabel]),
     ...(source?.matrixContent?.fields || []).flatMap(field=>field.valueCatalog.map(value=>value.display)),
     ...(source?.suspects || []).flatMap(person=>Object.values(person.attributes || {})),
+    ...(source?.activities || []).flatMap(activity=>activity.questions.map(question=>question.answer)),
     ...(source?.locations || []).map(item=>item.name), ...(source?.objects || []).map(item=>item.name)
   ].filter(value=>typeof value==='string' && value.trim() && !/^[-+\d\s:./]+$/.test(value)))];
 }
@@ -793,6 +797,7 @@ function languageInstructions() {
   return `PACKET LANGUAGE: ${JSON.stringify(language)}
 Write every student/teacher narrative, question, worked explanation, clue, glossary and reference in this language, with primary-school reading difficulty. Spanish means clear US-classroom Spanish unless the teacher specifies otherwise. Preserve personal names, mathematical values, stable IDs, machine enum values and schema keys. Do not translate metadata or code.
 For non-English output, complete localization.labels for EVERY supplied English source key, using short natural translations. This dictionary translates fixed packet headings/instructions and teacher-locked labels, incident, catalog displays and profile values at print time. Keep those original locked machine strings unchanged in their original fields. Do not put equations, HTML or Markdown in label translations. localization.language and direction must match the design. The app interface remains English.
+In translated packets, teacher-supplied clue wording locks its MEANING rather than its source-language spelling. Translate both polarities without changing the classification rule; keep wording already in the target language where it fits. Teacher-supplied numerical predicates, truth values and solution remain immutable.
 Answer Matching outputs contain one to three NFC uppercase grapheme clusters, keeping native-script accents and letters; scripts without case remain unchanged. Spaces and supported punctuation are omitted from replay. Cross-Out tiles contain one grapheme each and still read by grid position left-to-right then top-to-bottom, even in an RTL packet; explain this explicitly in translated directions. Alphabet Code only supports A–Z and cannot encode accented or non-Latin characters. Do not silently transliterate a native-script clue. Fit a natural equivalent clue to the locked response budget; do not change question counts or evidence polarity.
 ${P.publication?.translationSource ? 'PARALLEL EDITION: Translate the supplied source case; do not invent a new mystery. Keep the same facts, cast, culprit, stable response IDs/order, numeric values, math answers, checkExpression, equation markers, figure geometry, assignments, catalog keys/displays/truth and predicate parameters. Translate catalog/profile displays through localization.labels, not by modifying machine values. Translate exact clue wording faithfully while repartitioning fragments for the unchanged math answers. Equal answers must still yield the same fragment. Source Alphabet Code activities are explicitly converted to Answer Matching in the new design so math answers remain unchanged. Shorten both teacher closing paragraphs; retain practical answer conventions and timing qualifications. Remove any old printSolutionExplanation/printTeachingNotes overrides or translate them too. Structural validation cannot establish translation fidelity; a fluent teacher must review both editions.' : ''}`;
 }
@@ -859,10 +864,16 @@ function localizePublication(html) {
     });
     return leading+parts.join(' · ')+trailing;
   };
-  let protectedDepth=0;
+  const protectedTags=[];
+  const names=new Set((P.generated?.suspects || []).map(item=>esc(item.name)));
   return html.split(/(<[^>]*>)/g).map(part=>{
-    if(part.startsWith('<')) {if(/^<(?:math|svg)\b/.test(part))protectedDepth++;if(/^<\/(?:math|svg)>/.test(part))protectedDepth--;return part;}
-    return protectedDepth ? part : translate(part);
+    if(part.startsWith('<')) {
+      const closing=part.match(/^<\/([\w-]+)/),opening=part.match(/^<([\w-]+)/);
+      if(closing && protectedTags.at(-1)===closing[1]) protectedTags.pop();
+      else if(opening && !/\/>$/.test(part) && !/^(?:br|hr|img|input|meta|link)$/.test(opening[1]) && (protectedTags.length || /^(?:math|svg)$/.test(opening[1]) || /class="[^"]*(?:decoder-symbol|decoded-replay)/.test(part))) protectedTags.push(opening[1]);
+      return part;
+    }
+    return protectedTags.length || names.has(part.trim()) ? part : translate(part);
   }).join('');
 }
 
@@ -943,7 +954,7 @@ function contentSchema(){const template=resultTemplate();const schema=schemaFrom
  p.case.properties.incidentSubject={type:'string',const:P.incident,description:'Application-owned teacher incident. Copy exactly; put specific object names and creative details in briefing, hook, and title.'};
  const glossary={id:'',term:'',displayTerm:'',meaning:'',clueRelevantFact:'',example:'',sourceUrl:'',generalSupport:false};
  p.glossary.items=schemaFrom(glossary);
- for(const key of ['title','hook','briefing','timeline','evidenceRule'])p.case.properties[key].description='Printed directly for primary students: short, familiar, ELL-friendly narrative and directions; technical details belong in teachingNotes.';
+ for(const key of ['title','hook','briefing','timeline','evidenceRule'])p.case.properties[key].description='Printed directly for primary students: short, familiar, ELL-friendly narrative and directions; practical teaching guidance belongs in concise teachingNotes.';
  p.referenceGuides.items=schemaFrom({id:'',fieldId:'',title:'',introduction:'',rows:[{valueKey:'',classification:'',explanation:'',glossaryIds:['']}]});
  p.referenceGuides.items.description='Only non-numeric cultural/factual reference guides. Omit Number fields. Student-facing plain prose. No equations, calculations, or numbered glossary markers.';
  p.solutionExplanation.description='Concise teacher closing summary, 60–90 words. State how the findings establish the solution; do not repeat candidate-by-candidate eliminations.';
@@ -1039,11 +1050,11 @@ function buildCrossout(activity){const answers=activity.questions.map(q=>q.answe
  const random=seededRandom(P.id+activity.id+answers.join('|')+letters.join(''));const used=new Set(answers.map(canonicalAnswer));const values=answers.map(a=>{try{return calculate(a)}catch{return NaN}});if(values.some(v=>!Number.isFinite(v)))throw Error('Cross-Out requires numeric answers; choose Answer Matching for labels or units.');
  const low=Math.min(...values),high=Math.max(...values);const fraction=answers.some(a=>a.includes('/'));const decimals=answers.some(a=>a.includes('.'));const denominators=answers.map(a=>a.match(/\/\s*(\d+)$/)?.[1]).filter(Boolean).map(Number);const decimalPlaces=Math.min(6,Math.max(0,...answers.map(a=>(a.split('.')[1]||'').length)));const unit=decimals?10**(-decimalPlaces):1;const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);const deltas=values.slice(1).map(v=>Math.round((v-values[0])/unit));const step=fraction?1/Math.max(2,...denominators):Math.max(1,deltas.reduce(gcd,0))*unit;const span=Math.max((answers.length+letters.length+8)*step,high-low);const start=low>=0?Math.max(0,low-span*.25):low-span*.25;const survivors=[];
  for(let i=0;i<letters.length;i++){let answer='',ok=false;for(let tries=0;tries<3000;tries++){const v=start+random()*span*1.5;if(fraction){const den=denominators.length?denominators[Math.floor(random()*denominators.length)]:2+Math.floor(random()*11);answer=`${Math.round(v*den)}/${den}`;}else {const sampled=values[0]+Math.round((v-values[0])/step)*step;answer=decimals?sampled.toFixed(decimalPlaces):String(Math.round(sampled));}const key=canonicalAnswer(answer);if(!used.has(key)){used.add(key);ok=true;break;}}if(!ok)throw Error('Insufficient plausible distinct distractors; change the answer range or decoder.');survivors.push({id:`${activity.id}-S${i+1}`,answer,letter:letters[i],removeByResponseId:''});}
- const removable=activity.questions.map((q,i)=>({id:`${activity.id}-T${i+1}`,answer:q.answer,letter:String.fromCharCode(65+Math.floor(random()*26)),removeByResponseId:q.id}));
+ const removable=activity.questions.map((q,i)=>({id:`${activity.id}-T${i+1}`,answer:q.answer,letter:letters.some(letter=>!/^[A-Z]$/.test(letter))?letters[Math.floor(random()*letters.length)]:String.fromCharCode(65+Math.floor(random()*26)),removeByResponseId:q.id}));
  let best=[],bestScore=Infinity;for(let attempt=0;attempt<300;attempt++){const slots=Array.from({length:answers.length+letters.length},(_,i)=>i);for(let i=slots.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[slots[i],slots[j]]=[slots[j],slots[i]];}const occupied=new Set(slots.slice(0,removable.length));const rs=removable.slice().sort(()=>random()-.5);let ri=0,si=0;const tiles=slots.map((_,i)=>occupied.has(i)?rs[ri++]:survivors[si++]);const cols=crossoutColumns(tiles);let score=0,run=0,last=null;tiles.forEach(t=>{const bit=!!t.removeByResponseId;run=bit===last?run+1:1;last=bit;if(run>4)score+=run;});for(let c=0;c<cols;c++){const col=tiles.filter((_,i)=>i%cols===c);if(col.length>2&&col.every(t=>!t.removeByResponseId))score+=12;}if(tiles.every((t,i)=>!!t.removeByResponseId===(i%2===0)))score+=50;if(score<bestScore){best=tiles;bestScore=score;}if(score===0)break;}return best;
 }
-function alphabetSheet(){return `<h2>Alphabet Code reference</h2><p>Use this shared sheet for every Alphabet Code investigation. Match each answer to its letter.</p><div class="alphabet-grid">${Array.from({length:26},(_,i)=>`<div><b>${String.fromCharCode(65+i)}</b><br>${i+1}</div>`).join('')}</div>`;}
-const IMPORT_CONTRACT=Object.freeze({selectionModes:['autoDistinctCoreCCSS','teacherSpecified'],decoderOutputPattern:'^[\\p{L}\\p{M}]+$',equationFunctions:['sqrt','abs','pi']});
+function alphabetSheet(){return `<h2>Alphabet Code reference</h2><p>Use this shared sheet for every Alphabet Code investigation. Match each answer to its letter.</p><div class="alphabet-grid">${Array.from({length:26},(_,i)=>`<div><b class="decoder-symbol">${String.fromCharCode(65+i)}</b><br>${i+1}</div>`).join('')}</div>`;}
+const IMPORT_CONTRACT=Object.freeze({selectionModes:['autoDistinctCoreCCSS','teacherSpecified'],decoderOutputPattern:'^[\\p{L}\\p{M}\\u200C\\u200D]+$',equationFunctions:['sqrt','abs','pi']});
 function validateEquationGrammar(source){
  const text=String(source??'').trim();
  if(!text||/\.\.|…|:|\[\[|\]\]/.test(text))throw Error('Equation markers cannot contain ellipses, clock labels, or nested markers.');
@@ -1135,8 +1146,8 @@ printMode = P.publication.printMode || 'student';
 
 function save() {
   P.publication = { ...P.publication, printMode };
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(P)); }
-  catch { toast('Browser storage is unavailable. Use Save project to keep this work.'); }
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(P)); return true; }
+  catch { toast('Browser storage is unavailable. Use Save project to keep this work.'); return false; }
 }
 
 function recentProjects() {
@@ -1818,7 +1829,7 @@ function approvedClues(logic) {
 }
 
 function usesGeneratedClue(activity) {
-  return !!P.publication?.translationSource || ['AI narrative evidence', 'AI property value', 'AI predicate clue'].includes(activity.logic.cluePolicy);
+  return packetLanguage().code !== 'en' || !!P.publication?.translationSource || ['AI narrative evidence', 'AI property value', 'AI predicate clue'].includes(activity.logic.cluePolicy);
 }
 
 function clueUnits(value) {
@@ -1827,10 +1838,10 @@ function clueUnits(value) {
 }
 function normalizedClue(value) { return clueUnits(value).join(''); }
 function unsupportedClueCharacters(value) {
-  return /[^\p{L}\p{M}\s.,'’&()\-،。！!¿?¡؛：:]/u.test(String(value));
+  return /[^\p{L}\p{M}\p{P}\s&\u200C\u200D]/u.test(String(value));
 }
 function validClueFragment(value, maximum = 3) {
-  return typeof value === 'string' && /^[\p{L}\p{M}]+$/u.test(value) && value === value.normalize('NFC').toUpperCase() && clueUnits(value).length >= 1 && clueUnits(value).length <= maximum;
+  return typeof value === 'string' && /^[\p{L}\p{M}\u200C\u200D]+$/u.test(value) && value === value.normalize('NFC').toUpperCase() && clueUnits(value).length >= 1 && clueUnits(value).length <= maximum;
 }
 
 function decoderSetting(activity) {
@@ -2169,7 +2180,7 @@ Use accessible, primary-school language in ${packetLanguage().name || "the selec
 • Build the Profile: every decoded characteristic belongs to the responsible person. The suspect attribute table must leave exactly one match; no single attribute may identify that person alone, and every attribute must be necessary.
 • Complete the Case: use case-specific facts rather than directly encoding candidate names. Suspects, locations, and objects remain independent lists and all three end with exactly one candidate. evidenceNarrative must name the formally ruled-out candidate and justify the deduction.
 ${matrixGenerationInstructions()}
-When cluePolicy is “Teacher-approved exact text,” exactClueText must equal the primary clue text or one approved shorter label in LOCKED DESIGN.
+For English generation without a parallel translation source, when cluePolicy is “Teacher-approved exact text,” exactClueText must equal the primary clue text or one approved shorter label in LOCKED DESIGN. Translated editions follow the language contract while preserving the exact finding.
 
 CANDIDATE ORDER AND CONTEXTUAL NAMING
 The engine already selected the solution and independently shuffled dossierOrder. Preserve those choices. The responsible suspect must NOT systematically appear last (or first); never move that person to a special position, group all innocent people before the culprit, or use the order as a clue. Keep roles, narrative detail, and statement lengths balanced. The app prints its saved order even if you reorder the JSON arrays. Do not change any candidate ID. Follow SUSPECT NAMING AUTHORIZATION below for display names; otherwise preserve them. Never use old stand-in names in narrative after renaming.
@@ -2423,10 +2434,10 @@ function validateMatrixResult(result) {
     for (const key of ['positiveText', 'negativeText', 'selectedPolarity', 'decoderPayload']) requireText(field.clue[key], `Field ${planned.label} clue ${key}`);
     if (!field.clue.positiveText.trim() || !field.clue.negativeText.trim() || !field.clue.decoderPayload.trim()) throw new Error(`Field ${planned.label}: both clue phrasings and the selected decoder payload are required.`);
     if (normalizedWords(field.clue.positiveText) === normalizedWords(field.clue.negativeText)) throw new Error(`Field ${planned.label}: positive and negative clue wording must be distinct.`);
-    if (!P.publication?.translationSource && planned.clueMode === 'Teacher supplied' && (field.clue.positiveText !== planned.positiveClue || field.clue.negativeText !== planned.negativeClue)) throw new Error(`Field ${planned.label}: teacher-supplied clue wording changed.`);
+    if (packetLanguage().code === 'en' && !P.publication?.translationSource && planned.clueMode === 'Teacher supplied' && (field.clue.positiveText !== planned.positiveClue || field.clue.negativeText !== planned.negativeClue)) throw new Error(`Field ${planned.label}: teacher-supplied clue wording changed.`);
     const expectedPolarity = culpritRow[fieldIndex] ? 'positive' : 'negative';
     if (field.clue.selectedPolarity !== expectedPolarity) throw new Error(`Field ${planned.label}: selectedPolarity must be ${expectedPolarity} for the locked culprit row.`);
-    if (!P.publication?.translationSource && planned.clueMode === 'Teacher supplied' && field.clue.decoderPayload !== (expectedPolarity === 'positive' ? planned.positivePayload : planned.negativePayload)) throw new Error(`Field ${planned.label}: teacher-supplied decoder payload changed.`);
+    if (packetLanguage().code === 'en' && !P.publication?.translationSource && planned.clueMode === 'Teacher supplied' && field.clue.decoderPayload !== (expectedPolarity === 'positive' ? planned.positivePayload : planned.negativePayload)) throw new Error(`Field ${planned.label}: teacher-supplied decoder payload changed.`);
     if (field.valueType !== 'Sex and Gender' && containsGenderedLanguage(`${field.clue.positiveText} ${field.clue.negativeText}`)) throw new Error(`Field ${planned.label}: a non-gender clue uses gendered wording. Use M, killer, murderer, thief, poisoner, or criminal.`);
     const clueWords = ` ${normalizedWords(`${field.clue.positiveText} ${field.clue.negativeText} ${field.clue.decoderPayload}`)} `;
     if (result.suspects.some(suspect => clueWords.includes(` ${normalizedWords(suspect.name)} `)) || /\b(?:SUS|FIELD|ACT|CLUE)-/i.test(`${field.clue.positiveText} ${field.clue.negativeText} ${field.clue.decoderPayload}`)) throw new Error(`Field ${planned.label}: clue wording may not name a suspect or expose a stable ID.`);
@@ -2605,7 +2616,7 @@ function replayExtraction(planned, generated) {
   const extraction = generated.extraction;
   const questions = generated.questions;
   const target = normalizedClue(extraction.exactClueText);
-  const targetLength = clueUnits(target).length;
+  const targetLength = clueUnits(extraction.exactClueText).length;
   if (unsupportedClueCharacters(extraction.exactClueText) || !target) issues.push(issue('error', `${generated.title}: exact clue text contains unsupported characters or no letters.`));
   if (!compatiblePlan(planned, extraction.exactClueText, extraction.decoder) || !countAllowed(planned, generated.actualResponseCount)) issues.push(issue('error', `${generated.title}: the actual decoder, clue, and response count do not fit the teacher budget.`));
   let decoded = '';
@@ -2837,6 +2848,7 @@ function generatedQABase() {
   issues.push(...mathMarkupIssues(result.solutionExplanation, 'Complete solution explanation'));
   issues.push(...mathMarkupIssues(result.teachingNotes, 'Teaching notes'));
   for (const key of ['printSolutionExplanation', 'printTeachingNotes']) if (result[key] !== undefined) issues.push(...mathMarkupIssues(result[key], key));
+  if (packetLanguage().code !== 'en') issues.push(issue('warn', 'Have a fluent speaker review the translated story, clues, mathematical wording and packet labels for equivalent meaning before classroom use or distribution.'));
   if (manualMath) issues.push(issue('warn', `${manualMath} mathematical response${manualMath === 1 ? '' : 's'} require explicit teacher verification because automatic arithmetic checking is unsupported or intentionally blank.`));
   issues.push(issue('warn', 'Teacher review remains required for mathematical construct alignment, figure accuracy, clue plausibility, narrative implications, answer leakage, and printed-page layout.'));
   if (!issues.some(item => item.level === 'error')) issues.unshift(issue('ok', 'The structured chain—question → answer → decoded clue → required finding → final solution—passes all supported checks.'));
@@ -2867,7 +2879,7 @@ function extractionDetails(planned, generated) {
   const extraction = generated.extraction;
   let details = '';
   if (extraction.decoder === 'Answer Matching') {
-    details = `<table><thead><tr><th>Response</th><th>Answer</th><th>Output</th></tr></thead><tbody>${generated.questions.map(question => { const entry = extraction.mapping.find(item => item.responseId === question.id) || {}; return `<tr><td>${esc(question.id)}</td><td>${mathText(entry.answer, true)}</td><td>${esc(entry.output)}</td></tr>`; }).join('')}</tbody></table><p class="muted">${extraction.decoys.length} additional shuffled key rows conceal the available clue letters until students match their own answers.</p>`;
+    details = `<table><thead><tr><th>Response</th><th>Answer</th><th>Output</th></tr></thead><tbody>${generated.questions.map(question => { const entry = extraction.mapping.find(item => item.responseId === question.id) || {}; return `<tr><td>${esc(question.id)}</td><td>${mathText(entry.answer, true)}</td><td><bdi class="decoder-symbol">${esc(entry.output)}</bdi></td></tr>`; }).join('')}</tbody></table><p class="muted">${extraction.decoys.length} additional shuffled key rows conceal the available clue letters until students match their own answers.</p>`;
   } else if (extraction.decoder === 'Cross-Out') {
     details = `<table><thead><tr><th>Tile</th><th>Answer</th><th>Letter</th><th>Removed by</th></tr></thead><tbody>${extraction.tiles.map(tile => `<tr><td>${esc(tile.id)}</td><td>${esc(tile.answer)}</td><td>${esc(tile.letter)}</td><td>${esc(tile.removeByResponseId || 'Survives')}</td></tr>`).join('')}</tbody></table>`;
   }
@@ -3112,7 +3124,7 @@ function renderFigure(figure) {
 }
 
 function clueMask(value) {
-  return Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(String(value).normalize('NFC')), part => /\p{L}/u.test(part.segment) ? '_' : esc(part.segment)).join(' '); 
+  return Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(String(value).normalize('NFC').toUpperCase()), part => /\p{L}/u.test(part.segment) ? '_' : esc(part.segment)).join(' '); 
 }
 
 function responseRecordingStrip(activity) {
@@ -3122,7 +3134,7 @@ function responseRecordingStrip(activity) {
 // Preserve the shuffled key order across each row; never regroup by answer or fragment.
 function answerMatchingTable(entries, questionCount) {
   const paired = questionCount > 12 || entries.length > 12;
-  const cells = entry => entry ? `<td>${mathText(entry.answer, true)}</td><td>${esc(entry.output)}</td>` : '<td></td><td></td>';
+  const cells = entry => entry ? `<td>${mathText(entry.answer, true)}</td><td><bdi class="decoder-symbol">${esc(entry.output)}</bdi></td>` : '<td></td><td></td>';
   const rows = [];
   for (let i = 0; i < entries.length; i += paired ? 2 : 1) {
     rows.push(`<tr>${cells(entries[i])}${paired ? cells(entries[i + 1]) : ''}</tr>`);
@@ -3146,7 +3158,7 @@ function renderDecoderPanel(activity) {
     const entries = extraction.displayOrder.map(id => extraction.mapping.find(entry => entry.responseId === id) || extraction.decoys.find(entry => entry.id === id)).filter(Boolean);
     return `<div class="decoder-panel"><h3>Decode the finding · Answer Matching</h3><ol class="decoder-steps"><li>Solve each numbered question.</li><li>Find that answer in the shuffled key. Some rows are decoys.</li><li>Copy its clue fragment into the box with the same question number. Read the boxes from left to right—no anagramming.</li></ol>${answerMatchingTable(entries, activity.questions.length)}${responseRecordingStrip(activity)}<p class="clue-mask">${clueMask(extraction.exactClueText)}</p></div>`;
   }
-  return `<div class="decoder-panel"><h3>Decode the finding · Cross-Out</h3><p>Cross out the one tile matching each final answer. Read surviving letters left-to-right, then top-to-bottom.</p><div class="crossout-grid" style="--tile-columns:${crossoutColumns(extraction.tiles)}">${extraction.tiles.map(tile => `<div class="crossout-tile"><span>${crossoutAnswer(tile.answer)}</span><br><b style="font-size:1.25rem">${esc(tile.letter)}</b></div>`).join('')}</div><p class="clue-mask">${clueMask(extraction.exactClueText)}</p></div>`;
+  return `<div class="decoder-panel"><h3>Decode the finding · Cross-Out</h3><p>Cross out the one tile matching each final answer. Read surviving letters left-to-right, then top-to-bottom.</p><div class="crossout-grid" style="--tile-columns:${crossoutColumns(extraction.tiles)}">${extraction.tiles.map(tile => `<div class="crossout-tile"><span>${crossoutAnswer(tile.answer)}</span><br><b class="decoder-symbol" style="font-size:1.25rem">${esc(tile.letter)}</b></div>`).join('')}</div><p class="clue-mask">${clueMask(extraction.exactClueText)}</p></div>`;
 }
 
 function printFooter(kind, index, total) {
@@ -3250,7 +3262,7 @@ function studentPages() {
   const result = P.generated;
   const sections = [];
   const usesM = P.gameMode === 'matrix' && result.matrixContent.fields.some(field => /\bM\b/.test(`${field.clue.positiveText} ${field.clue.negativeText} ${field.clue.decoderPayload}`));
-  sections.push(`<div class="brand">A WILLIAM MCADA PRODUCT</div><p>CASE FILE · ${esc(P.course)} · GRADE ${esc(P.grade)}</p><h1>${esc(result.case.title)}</h1><p>${mathText(result.case.hook)}</p><p>Investigators: __________________________________________</p><p>Date: ____________________</p><h2>Case briefing</h2>${renderCaseVisual(result.case.visual)}<p><b>Incident:</b> ${mathText(result.case.incidentSubject)}</p><p>${mathText(result.case.briefing)}</p>${result.case.timeline ? `<h3>Initial timeline</h3><p>${mathText(result.case.timeline)}</p>` : ''}<div class="message info"><b>Evidence rule:</b> ${mathText(result.case.evidenceRule)}</div>${usesM ? '<div class="message info"><b>Clue shorthand:</b> In the clues, M means the person responsible.</div>' : ''}`);
+  sections.push(`<div class="brand">A WILLIAM MCADA PRODUCT</div><p>CASE FILE · ${esc(P.course)} · GRADE ${esc(P.grade)}</p><h1>${esc(result.case.title)}</h1><p>${mathText(result.case.hook)}</p><p>Investigators: __________________________________________</p><p>Date: ____________________</p><h2>Case briefing</h2>${renderCaseVisual(result.case.visual)}<p><b>Incident:</b> ${mathText(result.case.incidentSubject)}</p><p>${mathText(result.case.briefing)}</p>${result.case.timeline ? `<h3>Initial timeline</h3><p>${mathText(result.case.timeline)}</p>` : ''}<div class="message info"><b>Evidence rule:</b> ${mathText(result.case.evidenceRule)}</div>${usesM ? '<div class="message info"><b>Clue shorthand:</b> <span>In the clues, M means the person responsible.</span></div>' : ''}`);
   if (P.gameMode !== 'matrix') sections.push(studentCandidatePages(result));
   sections.push(...vocabularyPages(result));
   let alphabetInserted=false;
@@ -3270,12 +3282,15 @@ function compactTeacherText(text, limit, practical = false) {
   if (wordCount(original) <= limit) return original;
   const sentences = original.split(/(?<=[.!?])\s+(?=[A-Z0-9])/);
   // Extract complete sentences only. This is an editable draft, not semantic AI rewriting.
-  const useful = practical ? sentences.filter(sentence => /\b(?:prior instruction|prerequisite|calculator|timing conflict|minutes|multiple sessions|parallel teams|delivery option|response takes priority|exclusive packet rule|may be reused|reuse|corresponding key rows|do not redefine|does not redefine)\b/i.test(sentence) && !/\b(?:schema|contract|JSON|validation|verified|numeric start values|after midnight)\b/i.test(sentence)) : sentences;
+  const useful = practical ? sentences.filter(sentence => /\b(?:prior instruction|prerequisite|calculators?|timing conflict|minutes|multiple sessions|parallel teams|delivery option|response takes priority|exclusive packet rule|may be reused|reuse|corresponding key rows|do not redefine|does not redefine)\b/i.test(sentence) && !/\b(?:schema|contract|JSON|validation|verified|numeric start values|after midnight)\b/i.test(sentence)) : sentences;
+  const priority = sentence => /exclusive packet rule|response takes priority|may be reused|corresponding key rows|does not redefine|do not redefine/i.test(sentence) ? 3 : /prior instruction|prerequisite|calculators?/i.test(sentence) ? 2 : /timing conflict|parallel teams|delivery option|multiple sessions/i.test(sentence) ? 1 : 0;
+  const candidates = useful.map((text,index)=>({text,index}));
+  if(practical) candidates.sort((a,b)=>priority(b.text)-priority(a.text)||a.index-b.index);
   const selected = [];
-  for (const sentence of useful) {
-    if (wordCount([...selected, sentence].join(' ')) <= limit) selected.push(sentence);
+  for (const sentence of candidates) {
+    if (wordCount([...selected.map(item=>item.text), sentence.text].join(' ')) <= limit) selected.push(sentence);
   }
-  return selected.join(' ');
+  return selected.sort((a,b)=>a.index-b.index).map(item=>item.text).join(' ');
 }
 function teacherSolutionSummary(result) {
   if (typeof result.printSolutionExplanation === 'string') return result.printSolutionExplanation;
@@ -3297,7 +3312,7 @@ function teacherSolutionSummary(result) {
 function teacherNotesSummary(result) {
   if (typeof result.printTeachingNotes === 'string') return result.printTeachingNotes;
   if (packetLanguage().code !== 'en') return result.teachingNotes;
-  const compact = compactTeacherText(result.teachingNotes, 160, true);
+  const compact = compactTeacherText(result.teachingNotes, 180, true);
   return compact || 'Check the worked answers and decoder replays before class. Use the reference sheets and ELL glossary as needed. Ask students to explain how the combined clues support their final answer.';
 }
 
@@ -3311,7 +3326,7 @@ function teacherPages() {
   P.activities.forEach((planned, index) => {
     const activity = result.activities.find(item => item.id === planned.id);
     const replay = replayExtraction(planned, activity);
-    sections.push(`<h2>Investigation ${index + 1} · ${esc(activity.title)}</h2><p><b>Primary skill:</b> ${esc(activity.skillSummary.skillLabel)} · ${esc(activity.skillSummary.ccssStandard || planned.standard || 'No standard code')} · Grade ${esc(activity.skillSummary.grade)} · ${esc(planned.difficulty)}</p>${activity.questions.map((question, questionIndex) => `<div class="question"><h3>Response ${questionIndex + 1}: ${mathText(question.answer, true)}</h3><p>${mathText(question.worked)}</p></div>`).join('')}<h3>Answer → decoded evidence → required finding</h3><p><b>${esc(activity.extraction.decoder)} replay:</b> ${esc(replay.decoded)} → ${esc(findingDisplayLabel(planned))}</p><p>${mathText(activity.evidenceNarrative)}</p><p><b>Formal exclusions:</b> ${esc(rulesOutLabel(planned.logic))}</p>`);
+    sections.push(`<h2>Investigation ${index + 1} · ${esc(activity.title)}</h2><p><b>Primary skill:</b> ${esc(activity.skillSummary.skillLabel)} · ${esc(activity.skillSummary.ccssStandard || planned.standard || 'No standard code')} · Grade ${esc(activity.skillSummary.grade)} · ${esc(planned.difficulty)}</p>${activity.questions.map((question, questionIndex) => `<div class="question"><h3>Response ${questionIndex + 1}: ${mathText(question.answer, true)}</h3><p>${mathText(question.worked)}</p></div>`).join('')}<h3>Answer → decoded evidence → required finding</h3><p><b>${esc(activity.extraction.decoder)} replay:</b> <bdi class="decoder-symbol">${esc(replay.decoded)}</bdi> → ${esc(findingDisplayLabel(planned))}</p><p>${mathText(activity.evidenceNarrative)}</p><p><b>Formal exclusions:</b> ${esc(rulesOutLabel(planned.logic))}</p>`);
   });
   sections.push(`<h2>Teacher closing summary</h2><h3>Complete solution explanation</h3><p>${mathText(teacherSolutionSummary(result))}</p><h3>Teaching notes</h3><p>${mathText(teacherNotesSummary(result))}</p>`);
   return sections;

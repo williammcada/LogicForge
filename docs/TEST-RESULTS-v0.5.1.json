@@ -1,0 +1,30 @@
+{
+  "candidate": "LogicForge_v0.5.1.html",
+  "sha256": "bca45642ead59b178e62b355060b4725906dcb539b254a91680a70477eccf583",
+  "passed": [
+    "12 entries use two columns; 13 entries use four; question count also activates four",
+    "generation contract and schema distinguish primary narrative and plain references",
+    "legacy reference display escapes HTML and strips equation delimiters; math answers retain MathML",
+    "malformed, wrong-project and stale imports reject without replacing current content",
+    "numeric fields accept omitted reference guides at all three cultural depths",
+    "legacy numeric guides are suppressed; glossary, IDs and values remain intact",
+    "non-numeric cultural guides remain visible and required",
+    "all-numeric cases do not produce empty reference pages; empty glossary omitted",
+    "outgoing AI instructions omit numeric guides and visible glossary markers",
+    "teacher summaries finish the packet; all five actual replays appear in the front table",
+    "Unicode matching preserves accents and graphemes; masks never disclose non-Latin clue letters",
+    "native-script Answer Matching and Cross-Out replay through actual validation",
+    "complete synthetic matrix result passes the actual import path",
+    "translation copy preserves the original and binds new language to a separate project",
+    "parallel guard rejects altered math or deduction data while accepting translated prose",
+    "translated labels are required, escaped, and printed with language/direction metadata",
+    "translated import is atomic and rejects a changed source answer",
+    "scoped deletion supports cancel, group deletion, undo and storage failures without touching unrelated data"
+  ],
+  "notRun": [
+    "Physical browser/PDF pagination and visual inspection",
+    "Original saved-project roundtrip (saved design not supplied)",
+    "Fluent-speaker translation review and real AI-produced translated edition",
+    "Other mode/depth workflows"
+  ]
+}
