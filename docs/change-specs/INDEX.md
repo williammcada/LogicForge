@@ -15,3 +15,5 @@
 
 
 - [v0.5.3 compact lists](v0.5.3-COMPACT-LISTS.md) — implemented candidate; 26 automated check groups pass, physical PDF checks pending.
+
+- [v0.5.4 print measurement repair](v0.5.4-PRINT-MEASUREMENT.md) — fixes hidden-ID corruption and silent measurement failure.

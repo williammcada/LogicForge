@@ -4,9 +4,9 @@
 **Owner:** William McAda · **Credit:** A WILLIAM MCADA PRODUCT  
 **Status:** Canonical source identity reconciled; release, functional and deployment verification remain separately stated.  
 **Repository:** `williammcada/LogicForge`, branch `main`.  
-**Current candidate:** LogicForge_v0.5.3.html, application 0.5.3, schema 2.3.0. Automated checks passed; physical PDF and classroom verification remain pending.  
+**Current candidate:** LogicForge_v0.5.4.html, application 0.5.4, schema 2.3.0. Automated checks passed; physical PDF and classroom verification remain pending.  
 **Source/baseline:** v0.4.3 at 48430905324dad387d6d196b300d0759b976718f. v0.5 implementation checkpoint a191da43b14408f685cc988e880373b10361482f on work/v0.5-student-references.  
-**Next work:** Physical browser/PDF verification; see VERIFICATION-v0.5.3.md.  
+**Next work:** Physical browser/PDF verification; see VERIFICATION-v0.5.4.md.  
 
 
 ## 1. Purpose, audience and detailed scope
@@ -119,3 +119,7 @@ Student order: briefing, investigation questions/decoding (with the one-time alp
 ## 14. v0.5.3 compact lists
 
 The latest owner instruction supersedes v0.5.2 work spaces, boxes and optional three-column layout. Use two compact columns, single-command pure math, and no reserved working area. Target twenty pure-math questions on one A4 page. Preserve necessary contextual givens and mathematical precision. See change-specs/v0.5.3-COMPACT-LISTS.md; 26 automated regression groups pass, physical PDF verification remains pending. No shared handbook changes.
+
+## 15. v0.5.4 print measurement repair
+
+Preserve HTML attributes during publication prose cleanup. Previously ACT-prefixed investigation IDs were replaced, causing measurement to throw and print/save to stop. Errors now produce visible diagnostics. 28 regression groups pass including actual rendered HTML ID preservation; previous candidate reproduces the ID failure. Physical PDF checks remain pending. See change-specs/v0.5.4-PRINT-MEASUREMENT.md.
