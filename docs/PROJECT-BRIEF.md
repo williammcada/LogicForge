@@ -4,9 +4,9 @@
 **Owner:** William McAda · **Credit:** A WILLIAM MCADA PRODUCT  
 **Status:** Canonical source identity reconciled; release, functional and deployment verification remain separately stated.  
 **Repository:** `williammcada/LogicForge`, branch `main`.  
-**Current candidate:** LogicForge_v0.5.2.html, application 0.5.2, schema 2.3.0. Automated checks passed; physical PDF and classroom verification remain pending.  
+**Current candidate:** LogicForge_v0.5.3.html, application 0.5.3, schema 2.3.0. Automated checks passed; physical PDF and classroom verification remain pending.  
 **Source/baseline:** v0.4.3 at 48430905324dad387d6d196b300d0759b976718f. v0.5 implementation checkpoint a191da43b14408f685cc988e880373b10361482f on work/v0.5-student-references.  
-**Next work:** Physical browser/PDF verification; see VERIFICATION-v0.5.2.md.  
+**Next work:** Physical browser/PDF verification; see VERIFICATION-v0.5.3.md.  
 
 
 ## 1. Purpose, audience and detailed scope
@@ -115,3 +115,7 @@ Owner requests on 29 September: remove investigation introduction blocks and rou
 Question sheets now use bounded A4/Letter geometry with browser-measured one/two-page partitioning, a separate one-page decoder, and explicit overflow blocking. Never drop questions, split a question block, shrink illegibly or change the mathematical answers to satisfy the page limit. Retain full original prompts/instructions in Review; essential response codes/precision belong in concise printed fields or the question itself. Required review is renewed for the changed layout. Existing projects use the new layout without AI regeneration. All earlier data, decoder and multilingual behavior remain.
 
 Student order: briefing, investigation questions/decoding (with the one-time alphabet key where required), evidence tracker, cultural references, glossary. Empty optional sections remain omitted. No new shared handbook rule is proposed or saved.
+
+## 14. v0.5.3 compact lists
+
+The latest owner instruction supersedes v0.5.2 work spaces, boxes and optional three-column layout. Use two compact columns, single-command pure math, and no reserved working area. Target twenty pure-math questions on one A4 page. Preserve necessary contextual givens and mathematical precision. See change-specs/v0.5.3-COMPACT-LISTS.md; 26 automated regression groups pass, physical PDF verification remains pending. No shared handbook changes.
