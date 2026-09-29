@@ -1,0 +1,37 @@
+{
+  "candidate": "LogicForge_v0.5.2.html",
+  "sha256": "13376a875c4be98cc5ed9d74186e2e72c271bbf1b88b6befc743fbe7868a3bac",
+  "passed": [
+    "12 entries use two columns; 13 entries use four; question count also activates four",
+    "generation contract and schema distinguish primary narrative and plain references",
+    "legacy reference display escapes HTML and strips equation delimiters; math answers retain MathML",
+    "malformed, wrong-project and stale imports reject without replacing current content",
+    "numeric fields accept omitted reference guides at all three cultural depths",
+    "legacy numeric guides are suppressed; glossary, IDs and values remain intact",
+    "non-numeric cultural guides remain visible and required",
+    "all-numeric cases do not produce empty reference pages; empty glossary omitted",
+    "outgoing AI instructions omit numeric guides and visible glossary markers",
+    "teacher summaries finish the packet; all five actual replays appear in the front table",
+    "Unicode matching preserves accents and graphemes; masks never disclose non-Latin clue letters",
+    "native-script Answer Matching and Cross-Out replay through actual validation",
+    "complete synthetic matrix result passes the actual import path",
+    "translation copy preserves the original and binds new language to a separate project",
+    "parallel guard rejects altered math or deduction data while accepting translated prose",
+    "translated labels are required, escaped, and printed with language/direction metadata",
+    "translated import is atomic and rejects a changed source answer",
+    "scoped deletion supports cancel, group deletion, undo and storage failures without touching unrelated data",
+    "student sheets omit introductions, separate decoding, and retain all question IDs",
+    "culture references and glossary follow the tracker, without duplication",
+    "compact prompts remove only standalone computation coaching",
+    "empty introductions are valid; printed prompts preserve math; paper choices preserve identity",
+    "row partition permits at most two pages, includes gaps, and never divides rows",
+    "actual fit function chooses one/two pages and reruns without question loss (simulated geometry)",
+    "overflow remains visible and blocks rather than dropping content (simulated geometry)"
+  ],
+  "notRun": [
+    "Physical browser/PDF pagination and visual inspection",
+    "Original saved-project roundtrip (saved design not supplied)",
+    "Fluent-speaker translation review and real AI-produced translated edition",
+    "Other mode/depth workflows"
+  ]
+}
