@@ -994,6 +994,7 @@ function contentSchema(){const template=resultTemplate();const schema=schemaFrom
  if(P.gameMode==='matrix'){const f=p.matrixContent.properties.fields.items.properties;f.valueType.enum=CONTRACT.valueTypes;f.valueCatalog.items=schemaFrom({key:'',display:'',numericValue:null,truth:0,glossaryIds:['']});f.valueCatalog.items.required=f.valueCatalog.items.required.filter(k=>k!=='numericValue');f.valueCatalog.items.properties.truth.enum=[0,1];f.predicate.properties.operator.enum=CONTRACT.operators;}
  p.activities.items.properties.instructions.description='Legacy/reference-only text, not printed above investigations. Return an empty string for new content.';
  p.activities.items.properties.printDirections={type:'string',description:'Optional essential response convention only, maximum 240 characters. No introduction or method coaching.'};
+ p.activities.items.properties.questions.items.properties ||= {};
  p.activities.items.properties.questions.items.properties.printPrompt={type:'string',description:'Optional concise printed prompt, preserving every mathematical expression, given, unit and response requirement.'};
  const e=p.activities.items.properties.extraction.properties;
  e.mapping.items=schemaFrom({responseId:'',answer:'',output:''});e.decoys.items=schemaFrom({id:'',answer:'',output:''});e.displayOrder.items={type:'string'};e.tiles.items=schemaFrom({id:'',answer:'',letter:'',removeByResponseId:''});
@@ -2843,13 +2844,15 @@ function generatedQABase() {
   let manualMath = 0;
   result.activities.forEach((generated, index) => {
     const planned = P.activities.find(activity => activity.id === generated.id);
-    if (!generated.title.trim() || !generated.evidenceNarrative.trim()) issues.push(issue('error', `Investigation ${index + 1}: complete the title, instructions, and evidence narrative.`));
+    if (!generated.title.trim() || !generated.evidenceNarrative.trim()) issues.push(issue('error', `Investigation ${index + 1}: complete the title and evidence narrative.`));
     issues.push(...mathMarkupIssues(generated.instructions, `Investigation ${index + 1} instructions`));
+    if (generated.printDirections) issues.push(...mathMarkupIssues(generated.printDirections, `Investigation ${index + 1} short directions`));
     issues.push(...mathMarkupIssues(generated.evidenceNarrative, `Investigation ${index + 1} evidence explanation`));
     if (planned.figures.trim().toLowerCase() !== 'none' && planned.figures.trim() && !generated.figures.length) issues.push(issue('error', `Investigation ${index + 1}: a required figure is missing.`));
     generated.questions.forEach((question, questionIndex) => {
       if (!question.prompt.trim() || !question.answer.trim() || !question.worked.trim()) issues.push(issue('error', `Investigation ${index + 1}, response ${questionIndex + 1}: question, answer, and worked solution are required.`));
       issues.push(...mathMarkupIssues(question.prompt, `Investigation ${index + 1}, response ${questionIndex + 1} prompt`));
+      if (question.printPrompt) issues.push(...mathMarkupIssues(question.printPrompt, `Investigation ${index + 1}, response ${questionIndex + 1} printed prompt`));
       issues.push(...mathMarkupIssues(question.worked, `Investigation ${index + 1}, response ${questionIndex + 1} worked solution`));
       question.table.headers.forEach((cell, cellIndex) => issues.push(...mathMarkupIssues(cell, `Investigation ${index + 1}, response ${questionIndex + 1}, table header ${cellIndex + 1}`)));
       question.table.rows.forEach((row, rowIndex) => row.forEach((cell, cellIndex) => issues.push(...mathMarkupIssues(cell, `Investigation ${index + 1}, response ${questionIndex + 1}, table row ${rowIndex + 1} cell ${cellIndex + 1}`))));
@@ -3308,10 +3311,13 @@ function compactQuestionPrompt(question) {
   return match ? match[1] : source;
 }
 function shortStudentQuestion(question) {
-  return !question.figureIds?.length && !question.table?.headers?.length && compactQuestionPrompt(question).replace(/\[\[(?:eq|math):[^\]]+\]\]/g,'MATH').length <= 85;
+  return !wideStudentQuestion(question) && !question.table?.headers?.length && compactQuestionPrompt(question).replace(/\[\[(?:eq|math):[^\]]+\]\]/g,'MATH').length <= 85;
+}
+function wideStudentQuestion(question) {
+  return !!question.figureIds?.length || (question.table?.headers?.length || 0)>3 || [...compactQuestionPrompt(question).matchAll(/\[\[(?:eq|math):([^\]]+)\]\]/g)].some(match=>match[1].length>45);
 }
 function studentQuestionSheet(planned, activity, index) {
-  return `<div class="investigation-body" data-investigation="${esc(activity.id)}"><h2>Investigation ${index + 1} · ${esc(activity.title)}</h2><p class="investigation-meta">CALCULATOR: ${esc(planned.calculator)} <span class="question-page-counter"></span></p>${activity.printDirections?.trim() ? `<p class="compact-directions">${mathText(activity.printDirections)}</p>` : ''}<div class="question-grid">${activity.questions.map((question, questionIndex) => `<div class="question ${shortStudentQuestion(question) ? 'short-question' : ''} ${question.figureIds.length || question.table.headers.length > 3 ? 'wide-question' : ''}" data-question-index="${questionIndex}" data-response-id="${esc(question.id)}"><p><b>${questionIndex + 1}.</b> ${mathText(compactQuestionPrompt(question))}</p>${renderTable(question.table)}${question.figureIds.map(id => renderFigure(activity.figures.find(figure => figure.id === id))).join('')}<div class="work"></div></div>`).join('')}</div></div>`;
+  return `<div class="investigation-body" data-investigation="${esc(activity.id)}"><h2>Investigation ${index + 1} · ${esc(activity.title)}</h2><p class="investigation-meta"><span>CALCULATOR</span>: <span>${esc(planned.calculator)}</span> <span class="question-page-counter"></span></p>${activity.printDirections?.trim() ? `<p class="compact-directions">${mathText(activity.printDirections)}</p>` : ''}<div class="question-grid">${activity.questions.map((question, questionIndex) => `<div class="question ${shortStudentQuestion(question) ? 'short-question' : ''} ${wideStudentQuestion(question) ? 'wide-question' : ''}" data-question-index="${questionIndex}" data-response-id="${esc(question.id)}"><p><b>${questionIndex + 1}.</b> ${mathText(compactQuestionPrompt(question))}</p>${renderTable(question.table)}${question.figureIds.map(id => renderFigure(activity.figures.find(figure => figure.id === id))).join('')}<div class="work"></div></div>`).join('')}</div></div>`;
 }
 function questionPaper() {
   return P.publication?.paperSize === 'Letter' ? {name:'Letter',width:187.9,height:251.4} : {name:'A4',width:182,height:269};
@@ -3346,7 +3352,7 @@ function fitStudentInvestigations() {
   if(activeTab!==5 || printMode!=='student') return [];
   const paper=questionPaper(),maxHeight=paper.height*96/25.4-4,issues=[];
   const originals=Array.from(document.querySelectorAll('.investigation-sheet:not([data-continuation])'));
-  if(!originals.length) issues.push('No question pages are available to measure.');
+  if(originals.length !== P.activities.length) issues.push('Not all investigation question pages are available to measure. Reopen the student preview.');
   originals.forEach(sheet=>{
     const id=sheet.querySelector('[data-investigation]').dataset.investigation;
     const activity=P.generated.activities.find(item=>item.id===id);
@@ -3381,6 +3387,9 @@ function fitStudentInvestigations() {
   });
   const pages=Array.from(document.querySelectorAll('.sheet'));
   pages.forEach((page,index)=>{const foot=page.querySelector('.printfoot');if(foot)foot.outerHTML=localizePublication(printFooter('Student',index+1,pages.length));});
+  pages.filter(page=>page.matches('.investigation-sheet,.decoding-sheet')).forEach(page=>{
+    if(page.getBoundingClientRect().height>maxHeight && !page.classList.contains('layout-overflow')) {page.classList.add('layout-overflow');issues.push('Updated page numbering pushed a question or decoder page past its page limit. Shorten the printed content.');}
+  });
   const status=document.getElementById('questionLayoutStatus');
   if(status) {status.className=`message ${issues.length?'error':'ok'} noprint`;status.textContent=issues.length?issues.join(' '):`Measured for ${paper.name}: each investigation has 1–2 question pages and one decoding page. Print at 100%, with the selected paper size and browser headers/footers off.`;}
   return issues;
@@ -3392,7 +3401,6 @@ function studentPages() {
   const usesM = P.gameMode === 'matrix' && result.matrixContent.fields.some(field => /\bM\b/.test(`${field.clue.positiveText} ${field.clue.negativeText} ${field.clue.decoderPayload}`));
   sections.push(`<div class="brand">A WILLIAM MCADA PRODUCT</div><p>CASE FILE · ${esc(P.course)} · GRADE ${esc(P.grade)}</p><h1>${esc(result.case.title)}</h1><p>${mathText(result.case.hook)}</p><p>Investigators: __________________________________________</p><p>Date: ____________________</p><h2>Case briefing</h2>${renderCaseVisual(result.case.visual)}<p><b>Incident:</b> ${mathText(result.case.incidentSubject)}</p><p>${mathText(result.case.briefing)}</p>${result.case.timeline ? `<h3>Initial timeline</h3><p>${mathText(result.case.timeline)}</p>` : ''}<div class="message info"><b>Evidence rule:</b> ${mathText(result.case.evidenceRule)}</div>${usesM ? '<div class="message info"><b>Clue shorthand:</b> <span>In the clues, M means the person responsible.</span></div>' : ''}`);
   if (P.gameMode !== 'matrix') sections.push(studentCandidatePages(result));
-  sections.push(...vocabularyPages(result));
   let alphabetInserted=false;
   P.activities.forEach((planned, index) => {
     const activity = result.activities.find(item => item.id === planned.id);
@@ -3401,6 +3409,7 @@ function studentPages() {
     sections.push(`<div data-decoding-sheet="${esc(activity.id)}"><h2>Investigation ${index + 1} · ${esc(activity.title)}</h2>${renderDecoderPanel(activity, true)}<p class="tracker-caption">Use this clue to cross out candidates on your evidence tracker.</p></div>`);
   });
   sections.push(...trackerPages(result));
+  sections.push(...vocabularyPages(result));
   return sections;
 }
 

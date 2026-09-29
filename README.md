@@ -1,15 +1,19 @@
-# LogicForge v0.5.1
+# LogicForge v0.5.2
 
 **A WILLIAM MCADA PRODUCT**
 
 Offline teacher authoring for printable mathematics mysteries.
 
-[Download LogicForge_v0.5.1.html](LogicForge_v0.5.1.html), save locally, and open in a modern browser.
+[Download LogicForge_v0.5.2.html](LogicForge_v0.5.2.html), save locally, and open in a modern browser.
 
 Status: implementation candidate. Automated contract, import, decoder and generated-output checks pass. Browser/PDF layout and real translated-edition review remain pending.
 
 ## This update
 
+- Investigation introductions are no longer printed. Compact numbered questions use two columns, or three for short calculations when needed. The browser targets one question page and permits at most two, with a separate single decoding sheet. Overflow blocks printing instead of clipping questions.
+- The exact standalone fraction-division template loses the redundant reciprocal-method sentence. Other wording is retained unless edited in the new Compact printed question field. Essential conventions belong in the optional Short directions field or question prompt.
+- Culture/clue reference tables and the ELL glossary now finish the student packet, after the tracker.
+- Choose A4 or US Letter in Publish. Use the same paper size, 100% scale and no browser headers/footers in the print dialog. Reconfirm teacher review for the revised question layout.
 - Compact solution explanation and teaching notes finish the teacher packet. Full imported text remains in Review, with editable print summaries.
 - The five-clue elimination table includes each investigation's actual decoded replay.
 - Packet-language selector includes US Spanish, French, Portuguese, German, Chinese, Japanese, Korean, Vietnamese, Arabic, Hindi, Russian, Ukrainian, and a custom language/direction option.
@@ -37,9 +41,9 @@ Turn off **Headers and footers** in the browser print dialog to omit the browser
 ## Records
 
 - [Project brief](docs/PROJECT-BRIEF.md)
-- [v0.5.1 change specification](docs/change-specs-v0.5.1.md)
-- [Verification and limits](docs/VERIFICATION-v0.5.1.md)
-- [Machine test report](docs/TEST-RESULTS-v0.5.1.json)
+- [v0.5.2 change specification](docs/change-specs/v0.5.2-COMPACT-INVESTIGATIONS.md)
+- [Verification and limits](docs/VERIFICATION-v0.5.2.md)
+- [Machine test report](docs/TEST-RESULTS-v0.5.2.json)
 - [McAda Project Handbook](https://github.com/williammcada/mcada-project-handbook)
 
-Candidate branch: work/v0.5-student-references. Old versions remain preserved. Application version is 0.5.1; the project/result schema remains 2.3.0.
+Candidate branch: work/v0.5-student-references. Old versions remain preserved. Application version is 0.5.2; the project/result schema remains 2.3.0. Twenty-five automated groups pass, including simulated pagination geometry; physical browser/PDF inspection is still pending.

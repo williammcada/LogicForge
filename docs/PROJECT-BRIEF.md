@@ -4,9 +4,9 @@
 **Owner:** William McAda · **Credit:** A WILLIAM MCADA PRODUCT  
 **Status:** Canonical source identity reconciled; release, functional and deployment verification remain separately stated.  
 **Repository:** `williammcada/LogicForge`, branch `main`.  
-**Current candidate:** LogicForge_v0.5.html, application 0.5.0, schema 2.3.0. Automated checks passed; physical PDF and classroom verification remain pending.  
+**Current candidate:** LogicForge_v0.5.2.html, application 0.5.2, schema 2.3.0. Automated checks passed; physical PDF and classroom verification remain pending.  
 **Source/baseline:** v0.4.3 at 48430905324dad387d6d196b300d0759b976718f. v0.5 implementation checkpoint a191da43b14408f685cc988e880373b10361482f on work/v0.5-student-references.  
-**Next work:** Physical browser/PDF verification; see VERIFICATION-v0.5.md.  
+**Next work:** Physical browser/PDF verification; see VERIFICATION-v0.5.2.md.  
 
 
 ## 1. Purpose, audience and detailed scope
@@ -107,3 +107,11 @@ Handbook rechecked at 6de4cbf33c3b9860125c412359fb64ef3d0b20d1: AI-START-HERE.md
 Current candidate is LogicForge_v0.5.1.html, application 0.5.1/schema 2.3.0. This supersedes the current-candidate label above, not historical provenance. Requested scope: compact teacher closing summaries, actual decoder replay in the matrix table, packet-language selection and parallel translated editions through the established AI roundtrip. Source and translated copies preserve math and deduction identities; native-script matching and cross-out do not extend A–Z Alphabet Code. Full imported prose is retained for review. See change-specs-v0.5.1.md and VERIFICATION-v0.5.1.md for behavior and explicit limits.
 
 Handbook rechecked at 00cbde605ab08203b6b5fd2374d225155608fc29: AI-START-HERE, UNIVERSAL-RULES, CONDITIONAL-STANDARDS and RELEASE-CHECKLIST. Newly approved U-09 applies; Recent projects now offers scoped individual/group/all deletion with confirmation and in-tab undo. Only synthetic storage is used for development checks. No cross-product feature scope is inferred.
+
+## 13. v0.5.2 compact investigations and appendix order
+
+Owner requests on 29 September: remove investigation introduction blocks and routine method coaching, use multiple question columns, target one question page and cap at two, and move Culture and clue reference tables plus ELL glossary to the packet's end. Baseline cecad042d480f08258eb665bd0fbeb3f545d327e; handbook revision and applicable files re-read unchanged at 00cbde605ab08203b6b5fd2374d225155608fc29. Read the prior v0.5.1 spec; the current accepted scope is docs/change-specs/v0.5.2-COMPACT-INVESTIGATIONS.md.
+
+Question sheets now use bounded A4/Letter geometry with browser-measured one/two-page partitioning, a separate one-page decoder, and explicit overflow blocking. Never drop questions, split a question block, shrink illegibly or change the mathematical answers to satisfy the page limit. Retain full original prompts/instructions in Review; essential response codes/precision belong in concise printed fields or the question itself. Required review is renewed for the changed layout. Existing projects use the new layout without AI regeneration. All earlier data, decoder and multilingual behavior remain.
+
+Student order: briefing, investigation questions/decoding (with the one-time alphabet key where required), evidence tracker, cultural references, glossary. Empty optional sections remain omitted. No new shared handbook rule is proposed or saved.
